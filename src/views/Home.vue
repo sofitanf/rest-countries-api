@@ -38,7 +38,8 @@
 					@change="filterRegion"
 				>
 					<option value="" selected disable hidden>Filter by Region</option>
-					<option v-for="(region, i) in regions" :key="i" :value="region">
+
+					<option v-for="(region, i) in regions" :key="i" exact :value="region">
 						{{ region }}
 					</option>
 				</select>
@@ -80,7 +81,7 @@
 				:to="{ name: 'detail', query: { country: country.name.common } }"
 			>
 				<img
-					class="rounded-t-lg w-full h-48 sm:h-36 md:h-40"
+					class="rounded-t-lg w-full h-48 sm:h-36 md:h-40 lg:h-48"
 					:src="country.flags.png"
 					alt=""
 				/>
@@ -150,6 +151,7 @@ export default {
 		},
 
 		filterRegion() {
+			this.$router.push({ name: "home", query: { country: this.region } });
 			this.countries = [];
 			fetch(`https://restcountries.com/v3.1/region/${this.region}`)
 				.then((response) => response.json())
