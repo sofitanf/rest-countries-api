@@ -16,7 +16,8 @@
 			<i class="fas fa-arrow-left mr-2 text-xs"></i> Back
 		</button>
 	</div>
-	<div class="px-6 md:px-14 py-10 flex flex-col lg:flex-row lg:gap-10">
+	<Spinner v-if="loading" />
+	<div v-else class="px-6 md:px-14 py-10 flex flex-col lg:flex-row lg:gap-10">
 		<img style="min-width: 50%" :src="country.flags.png" alt="" />
 		<div>
 			<h1 class="font-bold text-xl mt-8 mb-6">
@@ -91,26 +92,29 @@
 	</div>
 </template>
 <script>
+import Spinner from "../components/Spinner.vue";
 export default {
+	components: { Spinner },
 	data() {
 		return {
-			country: [],
+			country: {},
 			nativeName: "",
 			currencies: "",
 			languages: [],
 			borders: [],
+			loading: false,
 		};
 	},
 	methods: {
-		async fetchData() {
+		fetchData() {
 			this.borders = [];
-			await fetch(
+			this.loading = true;
+			fetch(
 				`https://restcountries.com/v3.1/name/${this.$route.query.country}?fullText=true`
 			)
 				.then((response) => response.json())
 				.then((data) => {
 					this.country = data[0];
-
 					let arrayNativeName = Object.values(this.country.name.nativeName);
 					let arrayCurrencies = Object.values(this.country.currencies);
 					let arrayLanguages = Object.values(this.country.languages);
@@ -125,6 +129,7 @@ export default {
 							.then((data) => {
 								let res = data[0];
 								this.borders.push(res.name.common);
+								this.loading = false;
 							});
 					});
 				});

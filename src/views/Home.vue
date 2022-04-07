@@ -62,7 +62,9 @@
 			</div>
 		</div>
 	</div>
+	<Spinner v-if="searchCountry.length < 1" />
 	<div
+		v-else
 		class="
 			px-6
 			md:px-14
@@ -85,45 +87,47 @@
 					:src="country.flags.png"
 					alt=""
 				/>
-			</router-link>
-			<div
-				class="
-					bg-white
-					rounded-b-lg
-					dark:bg-dm-dark-blue
-					shadow-sm
-					px-5
-					pt-5
-					pb-10
-				"
-			>
-				<h1 class="font-bold text-lg mb-2">{{ country.name.common }}</h1>
-				<div class="text-sm">
-					<div class="flex gap-1">
-						<p>Populations:</p>
-						<a class="font-light">{{
-							new Intl.NumberFormat().format(country.population)
-						}}</a>
-					</div>
-					<div class="flex gap-1">
-						<p>Region:</p>
-						<a class="font-light">{{ country.region }}</a>
-					</div>
-					<div
-						v-for="(capital, i) in country.capital"
-						:key="i"
-						class="flex gap-1"
-					>
-						<p>Capital:</p>
-						<a class="font-light">{{ capital }}</a>
+				<div
+					class="
+						bg-white
+						rounded-b-lg
+						dark:bg-dm-dark-blue
+						shadow-sm
+						px-5
+						pt-5
+						pb-10
+					"
+				>
+					<h1 class="font-bold text-lg mb-2">{{ country.name.common }}</h1>
+					<div class="text-sm">
+						<div class="flex gap-1">
+							<p>Populations:</p>
+							<a class="font-light">{{
+								new Intl.NumberFormat().format(country.population)
+							}}</a>
+						</div>
+						<div class="flex gap-1">
+							<p>Region:</p>
+							<a class="font-light">{{ country.region }}</a>
+						</div>
+						<div
+							v-for="(capital, i) in country.capital"
+							:key="i"
+							class="flex gap-1"
+						>
+							<p>Capital:</p>
+							<a class="font-light">{{ capital }}</a>
+						</div>
 					</div>
 				</div>
-			</div>
+			</router-link>
 		</div>
 	</div>
 </template>
 <script>
+import Spinner from "../components/Spinner.vue";
 export default {
+	components: { Spinner },
 	data() {
 		return {
 			searchTerm: "",
@@ -137,19 +141,11 @@ export default {
 			return this.countries.filter((country) => {
 				return country.name.common
 					.toLowerCase()
-					.match(this.searchTerm.toLowerCase());
+					.match(this.searchTerm.trim().toLowerCase());
 			});
 		},
 	},
 	methods: {
-		async fetchData() {
-			await fetch("https://restcountries.com/v3.1/all")
-				.then((response) => response.json())
-				.then((data) => {
-					this.countries = data;
-				});
-		},
-
 		filterRegion() {
 			this.$router.push({ name: "home", query: { country: this.region } });
 			this.countries = [];
@@ -161,7 +157,11 @@ export default {
 		},
 	},
 	created() {
-		this.fetchData();
+		fetch("https://restcountries.com/v3.1/all")
+			.then((response) => response.json())
+			.then((data) => {
+				this.countries = data;
+			});
 	},
 };
 </script>
