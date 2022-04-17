@@ -17,6 +17,9 @@
 				md:px-14
 				shadow-sm
 				py-5
+				sticky
+				top-0
+				z-50
 			"
 		>
 			<router-link to="/">
@@ -26,7 +29,7 @@
 			</router-link>
 			<div class="flex gap-2 items-center cursor-pointer" @click="darkToggle">
 				<i class="fas fa-moon text-xs"></i>
-				<p class="text-sm">Dark mode</p>
+				<p class="text-sm">{{ textMode }}</p>
 			</div>
 		</nav>
 		<router-view />
@@ -40,6 +43,11 @@ export default {
 		return {
 			darkMode: false,
 		};
+	},
+	computed: {
+		textMode() {
+			return this.darkMode ? "Light" : "Dark";
+		},
 	},
 	methods: {
 		darkToggle() {
